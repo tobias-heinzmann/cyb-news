@@ -6,6 +6,10 @@ __pycache__/
 # data
 data/
 
+# env stuff
+.env
+.envrc
+
 # C extensions
 *.so
 
