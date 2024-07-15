@@ -62,12 +62,11 @@ docker_run_local_interactively:
 
 # Cloud images - using architecture compatible with cloud, i.e. linux/amd64
 
-DOCKER_IMAGE_PATH := $(GCP_REGION)-docker.pkg.dev/$(GCP_PROJECT)/$(DOCKER_REPO_NAME)/$(DOCKER_IMAGE_NAME)
+DOCKER_IMAGE_PATH := $(GCP_REGION)-docker.pkg.dev/$(GCP_PROJECT_ID)/$(DOCKER_REPO_NAME)/$(DOCKER_IMAGE_NAME)
 
 docker_build:
-	docker build \
-		--platform linux/amd64 \
-		-t $(DOCKER_IMAGE_PATH):prod .
+	docker build --platform linux/amd64 -t $(DOCKER_IMAGE_PATH):prod .
+
 
 # Alternative if previous doesn´t work. Needs additional setup.
 # Probably don´t need this. Used to build arm on linux amd64
@@ -111,3 +110,13 @@ docker_deploy:
 		--memory $(GAR_MEMORY) \
 		--region $(GCP_REGION) \
 		--env-vars-file .env.yaml
+
+
+# google stuff
+google_create_artifact_repo:
+	gcloud artifacts repositories create $(DOCKER_REPO_NAME) \
+		--repository-format=docker --location=$(GCP_REGION) \
+		--description="Check Your Bias News"
+
+google_auth_docker:
+	gcloud auth configure-docker $(GCP_REGION)-docker.pkg.dev
