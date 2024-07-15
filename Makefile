@@ -90,17 +90,6 @@ docker_run_interactively:
 		$(DOCKER_IMAGE_PATH):prod \
 		bash
 
-# Push and deploy to cloud
-
-docker_allow:
-	gcloud auth configure-docker $(GCP_REGION)-docker.pkg.dev
-
-docker_create_repo:
-	gcloud artifacts repositories create $(DOCKER_REPO_NAME) \
-		--repository-format=docker \
-		--location=$(GCP_REGION) \
-		--description="Repository for storing docker images"
-
 docker_push:
 	docker push $(DOCKER_IMAGE_PATH):prod
 
@@ -108,14 +97,14 @@ docker_deploy:
 	gcloud run deploy \
 		--image $(DOCKER_IMAGE_PATH):prod \
 		--memory $(GAR_MEMORY) \
-		--region $(GCP_REGION) \
-		--env-vars-file .env.yaml
+		--region $(GCP_REGION)
 
 
 # google stuff
 google_create_artifact_repo:
 	gcloud artifacts repositories create $(DOCKER_REPO_NAME) \
-		--repository-format=docker --location=$(GCP_REGION) \
+		--repository-format=docker \
+		--location=$(GCP_REGION) \
 		--description="Check Your Bias News"
 
 google_auth_docker:
