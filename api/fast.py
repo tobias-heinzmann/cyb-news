@@ -39,16 +39,16 @@ def put_predict(text: Annotated[str, Query(max_length=MAX_REQ_TEXT)]):
     return _response_predict(text)
 
 
-def _response_predict(text: str) -> dict:
+def _response_predict(text: str):
     return {
         'fake': _predict_class(text),
         'probability': _predict_proba(text)
     }
 
 
-def _predict_class(text: str) -> bool:
+def _predict_class(text: str):
     return bool(random.getrandbits(1))
     
 
-def _predict_proba(text: str) -> bool:
+def _predict_proba(text: str):
     return random.uniform(-1, 1)
