@@ -31,6 +31,6 @@ notebook_shim==0.2.0
 traitlets==5.5.0
 
 
-
+# frederik jus added this
 nltk
 scikit-learn
