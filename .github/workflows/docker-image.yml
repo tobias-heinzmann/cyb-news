@@ -20,14 +20,14 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: make docker_build
-  push:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - run: make docker_push
-  deploy:
-    runs-on: ubuntu-latest
-    needs: push
-    steps:
-      - run: make docker_deploy
+      run: make docker_build && make docker_push && make docker_deploy
+  # push:
+  #   runs-on: ubuntu-latest
+  #   needs: build
+  #   steps:
+  #     - run: make docker_push
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   needs: push
+  #   steps:
+  #     - run: make docker_deploy
