@@ -17,7 +17,7 @@ from setuptools import setup
 
 setup(
     name='cybnews',
-    version="0.0.2",
+    version="0.0.5",
     description="Project Description",
     packages=find_packages(),
     #install_requires=requirements,
