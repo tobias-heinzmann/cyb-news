@@ -11,7 +11,7 @@ if __name__ == "__main__":
     # data = data.sample(frac=0.1, random_state=42)
     #data = preprocessing(data)
     #X_train, X_test, y_train, y_test  = train_test_split_data(data)
-    #model = create_new_model(X_train, y_train)
+    model = create_new_model(X_train, y_train)
     model = load_model('model.pkl', MODEL_PATH)
     #save_model(model, MODEL_PATH)
     pred = model.predict(preprocess_input('sadfasdfs v dfgesgxwe'))

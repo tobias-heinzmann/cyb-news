@@ -2,6 +2,7 @@
 
 import pandas as pd
 import string
+
 from nltk.corpus import stopwords
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
@@ -21,6 +22,7 @@ def _preprocessing(sentence):
     sentence = sentence.strip()
     sentence = sentence.lower()
     sentence = "".join(char for char in sentence if not char.isdigit())
+    
     for x in string.punctuation:
         sentence = sentence.replace(x, "")
 
