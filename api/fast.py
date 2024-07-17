@@ -1,13 +1,15 @@
-# TODO: Import your package, replace this by explicit imports of what you need
-
-
-# from packagename.main import predict
-from fastapi import FastAPI
+import random
+from typing import Annotated
+from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
+from cybnews.model import load_model
+from cybnews.data import preprocess_input
 
 
+
+MAX_REQ_TEXT=15000
 app = FastAPI()
-# app.state.model = load_model()
+app.state.model = load_model(model_name='model_2.pkl')
 
 
 app.add_middleware(
@@ -19,16 +21,29 @@ app.add_middleware(
 )
 
 
-# Endpoint for https://your-domain.com/
 @app.get("/")
 def root():
     return {
-        'message': "Hi, The API is running!"
+        'message': "This is the CYB News API. Be welcome."
     }
 
-
-# Endpoint for https://your-domain.com/predict?input_one=154&input_two=199
 @app.get("/predict")
-def get_predict(text: str):
-    assert isinstance(text, str)
-    return {'fake': True}
+def get_predict(text: Annotated[str, Query(max_length=MAX_REQ_TEXT)]):
+    return _response_predict(text)
+
+
+@app.post("/predict")
+def post_predict(text: Annotated[str, Query(max_length=MAX_REQ_TEXT)]):
+    return _response_predict(text)
+
+
+def _response_predict(text: str):
+    y_pred = app.state.model.predict(preprocess_input(text))
+    return {
+        'fake': False == bool(y_pred[0]),
+        'probability': _predict_proba(text)
+    }
+  
+
+def _predict_proba(text: str):
+    return random.uniform(-1, 1)

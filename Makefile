@@ -6,7 +6,9 @@ install_requirements:
 	@pip install -r requirements.txt
 
 install:
-	@pip install . -U
+	rm -rf cybnews.egg-info/
+	pip install . -U
+
 
 clean:
 	@rm -f */version.txt
@@ -94,10 +96,9 @@ docker_push:
 	docker push $(DOCKER_IMAGE_PATH):prod
 
 docker_deploy:
-	gcloud run deploy \
-		--image $(DOCKER_IMAGE_PATH):prod \
-		--memory $(GAR_MEMORY) \
-		--region $(GCP_REGION)
+	gcloud run deploy --image $(DOCKER_IMAGE_PATH):prod --memory $(GAR_MEMORY) --region $(GCP_REGION)
+
+docker: docker_build docker_push docker_deploy
 
 
 # google stuff
