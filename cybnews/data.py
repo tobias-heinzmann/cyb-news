@@ -1,5 +1,8 @@
+#!/usr/bin/env python3
+
 import pandas as pd
 import string
+
 from nltk.corpus import stopwords
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
@@ -19,6 +22,7 @@ def _preprocessing(sentence):
     sentence = sentence.strip()
     sentence = sentence.lower()
     sentence = "".join(char for char in sentence if not char.isdigit())
+    
     for x in string.punctuation:
         sentence = sentence.replace(x, "")
 
@@ -36,8 +40,12 @@ def _preprocessing(sentence):
     return ' '.join(n_l)
 
 
-
 def preprocessing(data: pd.DataFrame) -> pd.DataFrame:
     data["all_text_cleaned"] = data["all_text"].apply(_preprocessing)
     data_preprocessed = data[["all_text_cleaned", "label"]]
     return data_preprocessed
+
+
+def preprocess_input(text: str):
+    return [_preprocessing(text)]
+    
