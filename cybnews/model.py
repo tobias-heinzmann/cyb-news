@@ -7,9 +7,12 @@ import joblib
 
 
 MODEL_PATH = "/models/"
+MODEL_NAME = 'model.pkl'
 
 
 def train_test_split_data(data: pd.DataFrame):
+    """
+    """
     X_train, X_test, y_train, y_test = train_test_split(
         data["all_text_cleaned"],
         data["label"],
@@ -20,22 +23,32 @@ def train_test_split_data(data: pd.DataFrame):
 
 
 def create_new_model(X_train, y_train):
+    """
+    Creates a new model
+    """
     pipeline = make_pipeline(
         TfidfVectorizer(
             ngram_range = (1, 2)),
             SVC(
-                C = 10, degree = 1, kernel = 'sigmoid'))
-    pipeline.fit(X_train,y_train)
+                C = 10,
+                degree = 1,
+                kernel = 'sigmoid'
+            )
+        )
+    pipeline.fit(X_train, y_train)
 
     return pipeline
 
 
 def save_model(model, model_path=MODEL_PATH):
+    """
+    Stores the model in the model_path
+    """
     joblib.dump(model, f"{model_path}model.pkl")
 
 
-
-
-def load_model(model, model_path=MODEL_PATH):
-    joblib.load(model, f"{model_path}model.pkl")
-    return model
+def load_model(model=MODEL_NAME, model_path=MODEL_PATH):
+    """
+    Retrieves the model from model_path
+    """
+    return joblib.load(f"{model_path}{model}")

@@ -2,11 +2,14 @@ import random
 from typing import Annotated
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
+from cybnews.model import load_model
+from cybnews.data import preprocess_input
+
 
 
 MAX_REQ_TEXT=10000
 app = FastAPI()
-# app.state.model = load_model()
+app.state.model = load_model(model_path='/home/tober/devel/lewagon/project/cyb-news/models/')
 
 
 app.add_middleware(
@@ -40,8 +43,9 @@ def put_predict(text: Annotated[str, Query(max_length=MAX_REQ_TEXT)]):
 
 
 def _response_predict(text: str):
+    y_pred = app.state.model.predict(preprocess_input(text))
     return {
-        'fake': _predict_class(text),
+        'fake': False == bool(y_pred[0]),
         'probability': _predict_proba(text)
     }
 

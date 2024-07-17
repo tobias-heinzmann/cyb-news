@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import pandas as pd
 import string
 from nltk.corpus import stopwords
@@ -36,8 +38,12 @@ def _preprocessing(sentence):
     return ' '.join(n_l)
 
 
-
 def preprocessing(data: pd.DataFrame) -> pd.DataFrame:
     data["all_text_cleaned"] = data["all_text"].apply(_preprocessing)
     data_preprocessed = data[["all_text_cleaned", "label"]]
     return data_preprocessed
+
+
+def preprocess_input(text: str):
+    return [_preprocessing(text)]
+    
