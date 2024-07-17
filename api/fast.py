@@ -4,7 +4,7 @@ from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 
-MAX_REQ_TEXT=10000
+MAX_REQ_TEXT=15000
 app = FastAPI()
 # app.state.model = load_model()
 
@@ -31,11 +31,6 @@ def get_predict(text: Annotated[str, Query(max_length=MAX_REQ_TEXT)]):
 
 @app.post("/predict")
 def post_predict(text: Annotated[str, Query(max_length=MAX_REQ_TEXT)]):
-    return _response_predict(text)
-
-
-@app.put("/predict")
-def put_predict(text: Annotated[str, Query(max_length=MAX_REQ_TEXT)]):
     return _response_predict(text)
 
 
