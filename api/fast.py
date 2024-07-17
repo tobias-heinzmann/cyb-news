@@ -7,7 +7,7 @@ from cybnews.data import preprocess_input
 
 
 
-MAX_REQ_TEXT=10000
+MAX_REQ_TEXT=15000
 app = FastAPI()
 app.state.model = load_model(model_path='/home/tober/devel/lewagon/project/cyb-news/models/')
 
@@ -34,11 +34,6 @@ def get_predict(text: Annotated[str, Query(max_length=MAX_REQ_TEXT)]):
 
 @app.post("/predict")
 def post_predict(text: Annotated[str, Query(max_length=MAX_REQ_TEXT)]):
-    return _response_predict(text)
-
-
-@app.put("/predict")
-def put_predict(text: Annotated[str, Query(max_length=MAX_REQ_TEXT)]):
     return _response_predict(text)
 
 
