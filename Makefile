@@ -96,11 +96,7 @@ docker_push:
 	docker push $(DOCKER_IMAGE_PATH):prod
 
 docker_deploy:
-	gcloud run deploy \	
-		--image $(DOCKER_IMAGE_PATH):prod \
-		--memory $(GAR_MEMORY) \
-		--region $(GCP_REGION)
-
+	gcloud run deploy --image $(DOCKER_IMAGE_PATH):prod --memory $(GAR_MEMORY) --region $(GCP_REGION)
 
 docker: docker_build docker_push docker_deploy
 
