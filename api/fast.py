@@ -9,7 +9,7 @@ from cybnews.data import preprocess_input
 
 MAX_REQ_TEXT=15000
 app = FastAPI()
-app.state.model = load_model(model_path='/home/tober/devel/lewagon/project/cyb-news/models/')
+app.state.model = load_model(model_name='model_2.pkl')
 
 
 app.add_middleware(
@@ -43,11 +43,7 @@ def _response_predict(text: str):
         'fake': False == bool(y_pred[0]),
         'probability': _predict_proba(text)
     }
-
-
-def _predict_class(text: str):
-    return bool(random.getrandbits(1))
-    
+  
 
 def _predict_proba(text: str):
     return random.uniform(-1, 1)
