@@ -4,7 +4,8 @@ import string
 from nltk.corpus import stopwords
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
-
+from wordcloud import WordCloud
+from collections import Counter
 
 LANGUAGE='english'
 STOPWORDS_DEL = ["not", "no", "nor", "against", "however", "but", "never", "should", "would" , "could", "might", "must", "no", "yes", "always", "none", "only", "still", "yet", "despite", "unless", "until", "cannot" ]
@@ -23,7 +24,7 @@ def tokenize(sentence):
     for x in string.punctuation:
         sentence = sentence.replace(x, '')
 
-    for x in ['’', '“', '”', '-', '"' ]:
+    for x in ['’', '“', '”', '—', '"' ]:
         sentence = sentence.replace(x, '')
 
     return word_tokenize(sentence)
@@ -79,3 +80,11 @@ def isot_join_text(data: pd.DataFrame):
 def isot_preprocessing(data: pd.DataFrame):
     data["all_text_cleaned"] = data["all_text"].apply(preprocessing)
     return data[["all_text_cleaned"]]
+
+
+def get_wordcloud():
+    pass # dict
+
+
+def save_wordcloud():
+    pass # pickeld dict in .json /.txt
