@@ -9,7 +9,7 @@ from cybnews.data import preprocess_input
 
 MAX_REQ_TEXT=15000
 app = FastAPI()
-app.state.model = load_model(model_name='model_2.pkl')
+app.state.model = load_model(model_name='model.pkl')
 
 
 app.add_middleware(
