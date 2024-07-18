@@ -2,7 +2,7 @@ numpy
 pandas
 scikit-learn
 nltk
-
+packaging
 fastapi
 uvicorn
 packaging
