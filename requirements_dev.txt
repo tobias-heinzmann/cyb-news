@@ -34,6 +34,8 @@ traitlets==5.5.0
 # frederik jus added this
 nltk
 scikit-learn
+collections
+wordcloud
 
 uvicorn
 fastapi
