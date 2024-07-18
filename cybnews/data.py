@@ -8,6 +8,7 @@ from nltk.stem import WordNetLemmatizer
 
 LANGUAGE='english'
 STOPWORDS_DEL = ["not", "no", "nor", "against", "however", "but", "never", "should", "would" , "could", "might", "must", "no", "yes", "always", "none", "only", "still", "yet", "despite", "unless", "until", "cannot" ]
+STOPWORDS_ADD = []
 
 
 def get_data(path):
@@ -38,7 +39,11 @@ def clear_stopwords(tokens, stopw_add=[], stopw_del=[], lang=LANGUAGE):
 
 def preprocessing(sentence):
     tokens = tokenize(sentence)
-    clean_tokens = clear_stopwords(tokens, stopw_del=STOPWORDS_DEL)
+    clean_tokens = clear_stopwords(
+        tokens,
+        stopw_del=STOPWORDS_DEL,
+        stopw_add=STOPWORDS_ADD
+    )
     
     v_l = [WordNetLemmatizer().lemmatize(word, pos = "v") for word in clean_tokens]
     n_l = [WordNetLemmatizer().lemmatize(word, pos = "n") for word in v_l]
