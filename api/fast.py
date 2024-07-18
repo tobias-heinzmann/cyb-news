@@ -43,7 +43,21 @@ def _response_predict(text: str):
         'fake': bool(y_pred[0]),
         'probability': _predict_proba(text)
     }
-  
+
 
 def _predict_proba(text: str):
     return random.uniform(-1, 1)
+
+
+
+real_words_file = load_model(model_name='words_real.json')
+fake_words_file = load_model(model_name='words_fake.json')
+
+@app.get("/wordcloud")
+def get_wordclouds(words):
+    if words == "Fake":
+        return fake_words_file
+    elif words == "Real":
+        return real_words_file
+    else:
+        return 'Please insert "Fake" or "Real" in order to get the associated dictionary'
