@@ -3,13 +3,18 @@ from typing import Annotated
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from cybnews.model import load_model
-from cybnews.data import preprocess_input
+from cybnews.data import preprocess_input, load_wordcloud
 
+import os
+
+WORDCLOUD_FAKE_PATH = os.getenv("WORDCLOUD_FAKE_PATH")
+WORDCLOUD_REAL_PATH = os.getenv("WORDCLOUD_REAL_PATH")
+MODEL_PATH = os.getenv("MODEL_PATH")
 
 
 MAX_REQ_TEXT=15000
 app = FastAPI()
-app.state.model = load_model(model_name='model.pkl')
+app.state.model = load_model(MODEL_PATH)
 
 
 app.add_middleware(
@@ -48,16 +53,17 @@ def _response_predict(text: str):
 def _predict_proba(text: str):
     return random.uniform(-1, 1)
 
+""""""
+
+real_words_file = load_wordcloud(WORDCLOUD_REAL_PATH)
+fake_words_file = load_wordcloud(WORDCLOUD_FAKE_PATH)
+
+@app.get("/wordcloud_fake")
+def get_wordclouds():
+    return fake_words_file
 
 
-real_words_file = load_model(model_name='words_real.json')
-fake_words_file = load_model(model_name='words_fake.json')
 
-@app.get("/wordcloud")
-def get_wordclouds(words):
-    if words == "Fake":
-        return fake_words_file
-    elif words == "Real":
-        return real_words_file
-    else:
-        return 'Please insert "Fake" or "Real" in order to get the associated dictionary'
+@app.get("/wordcloud_real")
+def get_wordclouds():
+    return real_words_file

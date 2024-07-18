@@ -7,11 +7,19 @@ from nltk.stem import WordNetLemmatizer
 
 from collections import Counter
 import json
+
+import os
+
+MODEL_PATH = os.getenv("MODEL_PATH")
+DATA_PATH = os.getenv("DATA_PATH")
+WORDCLOUD_FAKE_PATH = os.getenv("WORDCLOUD_FAKE_PATH")
+WORDCLOUD_REAL_PATH = os.getenv("WORDCLOUD_REAL_PATH")
+
 LANGUAGE='english'
 STOPWORDS_DEL = ["not", "no", "nor", "against", "however", "but", "never", "should", "would" , "could", "might", "must", "no", "yes", "always", "none", "only", "still", "yet", "despite", "unless", "until", "cannot" ]
 STOPWORDS_ADD = ["reuters"]
-MODEL_PATH = "/Users/admin/code/frederiklm/cyb-news/models"
-DATA_PATH = "/Users/admin/code/frederiklm/cyb-news/data/WELFake_Dataset.csv"
+
+
 
 def get_data(path):
     return pd.read_csv(path)
@@ -137,18 +145,19 @@ def get_word_cloud(data: pd.DataFrame):
     real_uptop_list = list(real_uptop.items())
     real_uptop_list_200 = real_uptop_list[:200]
     words_overrepresented_in_real = dict(real_uptop_list_200)
-    print(words_overrepresented_in_real)
 
     return words_overrepresented_in_real, words_overrepresented_in_fakes # dict
 
 
-def save_wordcloud(dict_real, dict_fake, model_path=MODEL_PATH):
-    with open(f'{model_path}/words_real.json', 'w') as json_file:
-        json.dump(dict_real, json_file)
-    with open(f'{model_path}/words_fake.json', 'w') as json_file:
-        json.dump(dict_fake, json_file)
+def save_wordcloud(dict_to_store,json_path):
+    with open(json_path, 'w') as json_file:
+        json.dump(dict_to_store, json_file)
 
 
+def load_wordcloud(file_name):
+    with open(file_name, 'r') as j_name:
+        dict_words = json.load(j_name)
+    return dict_words
 
 
 
@@ -156,4 +165,8 @@ if __name__ == '__main__':
     data = get_data(DATA_PATH)
     data= welf_join_text(data)
     real, fake = get_word_cloud(data)
-    save_wordcloud(real,fake, MODEL_PATH)
+    save_wordcloud(real, WORDCLOUD_REAL_PATH)
+    save_wordcloud(fake, WORDCLOUD_FAKE_PATH)
+
+    words = load_wordcloud(WORDCLOUD_REAL_PATH)
+    print(words)

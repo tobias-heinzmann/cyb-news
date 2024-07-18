@@ -1,8 +1,10 @@
 from cybnews.data import get_data, welf_join_text, preprocessing, preprocess_input, welf_preprocessing
 from cybnews.model import train_test_split_data, create_new_model, save_model, load_model
+import os
 
-MODEL_PATH = "/Users/admin/code/frederiklm/cyb-news/models"
-DATA_PATH = "/Users/admin/code/frederiklm/cyb-news/data/WELFake_Dataset.csv"
+MODEL_PATH = os.getenv("MODEL_PATH")
+
+DATA_PATH = os.getenv("DATA_PATH")
 
 
 if __name__ == "__main__":
