@@ -40,7 +40,7 @@ def post_predict(text: Annotated[str, Query(max_length=MAX_REQ_TEXT)]):
 def _response_predict(text: str):
     y_pred = app.state.model.predict(preprocess_input(text))
     return {
-        'fake': False == bool(y_pred[0]),
+        'fake': bool(y_pred[0]),
         'probability': _predict_proba(text)
     }
   
