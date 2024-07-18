@@ -9,7 +9,6 @@ install:
 	rm -rf cybnews.egg-info/
 	pip install . -U
 
-
 clean:
 	@rm -f */version.txt
 	@rm -f .coverage
@@ -18,8 +17,6 @@ clean:
 	@rm -fr proj-*.dist-info
 	@rm -fr proj.egg-info
 
-test_structure:
-	@bash tests/test_structure.sh
 
 #======================#
 #          API         #
@@ -27,15 +24,6 @@ test_structure:
 
 run_api:
 	uvicorn api.fast:app --reload --port 8000
-
-
-#======================#
-#          GCP         #
-#======================#
-
-gcloud-set-project:
-	gcloud config set project $(GCP_PROJECT)
-
 
 
 #======================#
@@ -62,20 +50,11 @@ docker_run_local_interactively:
 		$(DOCKER_IMAGE_NAME):local \
 		bash
 
-# Cloud images - using architecture compatible with cloud, i.e. linux/amd64
+
 
 DOCKER_IMAGE_PATH := $(GCP_REGION)-docker.pkg.dev/$(GCP_PROJECT_ID)/$(DOCKER_REPO_NAME)/$(DOCKER_IMAGE_NAME)
-
 docker_build:
 	docker build --platform linux/amd64 -t $(DOCKER_IMAGE_PATH):prod .
-
-
-# Alternative if previous doesn´t work. Needs additional setup.
-# Probably don´t need this. Used to build arm on linux amd64
-docker_build_alternative:
-	docker buildx build --load \
-		--platform linux/amd64 \
-		-t $(DOCKER_IMAGE_PATH):prod .
 
 docker_run:
 	docker run \
@@ -101,7 +80,12 @@ docker_deploy:
 docker: docker_build docker_push docker_deploy
 
 
-# google stuff
+#======================#
+#        Google        #
+#======================#
+gcloud-set-project:
+	gcloud config set project $(GCP_PROJECT)
+
 google_create_artifact_repo:
 	gcloud artifacts repositories create $(DOCKER_REPO_NAME) \
 		--repository-format=docker \
