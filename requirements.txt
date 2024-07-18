@@ -5,3 +5,4 @@ nltk
 
 fastapi
 uvicorn
+packaging

@@ -1,4 +1,5 @@
-FROM tensorflow/tensorflow:2.17.0
+#FROM tensorflow/tensorflow:2.17.0
+FROM python:3.10.6
 
 COPY cybnews cybnews
 COPY setup.py setup.py

@@ -4,10 +4,12 @@ from sklearn.pipeline import make_pipeline
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import SVC
 import joblib
+import os
 
 
-MODEL_PATH = "/models"
-MODEL_NAME = 'model_2.pkl'
+MODEL_PATH = os.getenv("MODEL_PATH")
+
+
 
 
 def train_test_split_data(data: pd.DataFrame):
@@ -45,11 +47,11 @@ def save_model(model, model_path=MODEL_PATH):
     """
     Stores the model in the model_path
     """
-    joblib.dump(model, f"{model_path}/model.pkl")
+    joblib.dump(model, MODEL_PATH)
 
 
-def load_model(model_name=MODEL_NAME, model_path=MODEL_PATH):
+def load_model(model_path=MODEL_PATH):
     """
     Retrieves the model from model_path
     """
-    return joblib.load(f"{model_path}/{model_name}")
+    return joblib.load(MODEL_PATH)
