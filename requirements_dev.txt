@@ -35,7 +35,7 @@ traitlets==5.5.0
 nltk
 scikit-learn
 collections
-wordcloud
+json
 
 uvicorn
 fastapi
