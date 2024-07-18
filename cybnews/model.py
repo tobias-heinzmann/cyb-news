@@ -32,7 +32,8 @@ def create_new_model(X_train, y_train):
             SVC(
                 C = 10,
                 degree = 1,
-                kernel = 'sigmoid'
+                kernel = 'sigmoid',
+                probability=True
             )
         )
     pipeline.fit(X_train, y_train)
@@ -44,7 +45,7 @@ def save_model(model, model_path=MODEL_PATH):
     """
     Stores the model in the model_path
     """
-    joblib.dump(model, f"{model_path}model.pkl")
+    joblib.dump(model, f"{model_path}/model.pkl")
 
 
 def load_model(model_name=MODEL_NAME, model_path=MODEL_PATH):
