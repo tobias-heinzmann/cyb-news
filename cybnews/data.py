@@ -40,15 +40,17 @@ def clear_stopwords(tokens, stopw_add=[], stopw_del=[], lang=LANGUAGE):
 
 def preprocessing(sentence):
     tokens = tokenize(sentence)
+    v_l = [WordNetLemmatizer().lemmatize(word, pos = "v") for word in tokens]
+    lemmatized_token = [WordNetLemmatizer().lemmatize(word, pos = "n") for word in v_l]
+
     clean_tokens = clear_stopwords(
-        tokens,
+        lemmatized_token,
         stopw_del=STOPWORDS_DEL,
         stopw_add=STOPWORDS_ADD
     )
 
-    v_l = [WordNetLemmatizer().lemmatize(word, pos = "v") for word in clean_tokens]
-    n_l = [WordNetLemmatizer().lemmatize(word, pos = "n") for word in v_l]
-    return ' '.join(n_l)
+
+    return ' '.join(clean_tokens)
 
 
 def preprocess_input(text: str):
@@ -83,8 +85,8 @@ def isot_preprocessing(data: pd.DataFrame):
 
 
 def get_wordcloud():
-    pass # dict
+    return words_overrepresented_in_real, words_overrepresented_in_fakes # dict
 
 
-def save_wordcloud():
+def save_wordcloud(dict_real, dict_fake):
     pass # pickeld dict in .json /.txt
