@@ -1,11 +1,12 @@
-import random
+import os
 from typing import Annotated
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
-from cybnews.model import load_model
-from cybnews.data import preprocess_input, load_wordcloud
 
-import os
+from cybnews.model import load_model
+from cybnews.data import preprocess_input
+from cybnews.wordcloud import load_wordcloud
+
 
 WORDCLOUD_FAKE_PATH = os.getenv("WORDCLOUD_FAKE_PATH")
 WORDCLOUD_REAL_PATH = os.getenv("WORDCLOUD_REAL_PATH")

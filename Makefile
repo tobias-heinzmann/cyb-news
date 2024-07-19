@@ -46,27 +46,16 @@ docker_build:
 	docker build --tag $(DOCKER_IMAGE_PATH):prod .
 
 docker_run_local:
-	docker run -e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 --env-file .env_docker $(DOCKER_IMAGE_NAME):local
+	docker run -e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 --env-file .env_docker $(DOCKER_IMAGE_NAME):local &
 
 docker_run:
-	docker run --platform linux/amd64 -e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 --env-file .env_docker $(DOCKER_IMAGE_PATH):prod
-
+	docker run --platform linux/amd64 -e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 --env-file .env_docker $(DOCKER_IMAGE_PATH):prod &
 
 docker_run_local_interactively:
-	docker run -it \
-		-e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 \
-		--env-file .env_docker \
-		$(DOCKER_IMAGE_NAME):local \
-		bash
-
+	docker run -it -e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 --env-file .env_docker $(DOCKER_IMAGE_NAME):local bash
 
 docker_run_interactively:
-	docker run -it \
-		--platform linux/amd64 \
-		-e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 \
-		--env-file .env_docker \
-		$(DOCKER_IMAGE_PATH):prod \
-		bash
+	docker run -it --platform linux/amd64 -e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 --env-file .env_docker $(DOCKER_IMAGE_PATH):prod bash
 
 docker_push:
 	docker push $(DOCKER_IMAGE_PATH):prod
