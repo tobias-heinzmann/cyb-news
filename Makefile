@@ -34,48 +34,34 @@ run_api:
 # i.e. linux/amd64 for Windows / Linux / Apple with Intel chip
 #      linux/arm64 for Apple with Apple Silicon (M1 / M2 chip)
 
+DOCKER_IMAGE_PATH := $(GCP_REGION)-docker.pkg.dev/$(GCP_PROJECT_ID)/$(DOCKER_REPO_NAME)/$(DOCKER_IMAGE_NAME)
+
 docker_build_local:
 	docker build --tag=$(DOCKER_IMAGE_NAME):local .
 
-docker_run_local:
-	docker run \
-		-e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 \
-		--env-file .env_docker \
-		$(DOCKER_IMAGE_NAME):local
-
-docker_run_local_interactively:
-	docker run -it \
-		-e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 \
-		--env-file .env_docker \
-		$(DOCKER_IMAGE_NAME):local \
-		bash
-
-
-
-DOCKER_IMAGE_PATH := $(GCP_REGION)-docker.pkg.dev/$(GCP_PROJECT_ID)/$(DOCKER_REPO_NAME)/$(DOCKER_IMAGE_NAME)
 docker_build:
-	docker build --platform linux/amd64 -t $(DOCKER_IMAGE_PATH):prod .
+	echo "DOCKER_IMAGE_NAME: "
+	echo "$(DOCKER_IMAGE_NAME)"
+#   docker build --platform linux/amd64 -t $(DOCKER_IMAGE_PATH):prod .
+	docker build --tag $(DOCKER_IMAGE_PATH):prod .
+
+docker_run_local:
+	docker run -e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 --env-file .env_docker $(DOCKER_IMAGE_NAME):local &
 
 docker_run:
-	docker run \
-		--platform linux/amd64 \
-		-e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 \
-		--env-file .env_docker \
-		$(DOCKER_IMAGE_PATH):prod
+	docker run --platform linux/amd64 -e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 --env-file .env_docker $(DOCKER_IMAGE_PATH):prod &
+
+docker_run_local_interactively:
+	docker run -it -e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 --env-file .env_docker $(DOCKER_IMAGE_NAME):local bash
 
 docker_run_interactively:
-	docker run -it \
-		--platform linux/amd64 \
-		-e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 \
-		--env-file .env_docker \
-		$(DOCKER_IMAGE_PATH):prod \
-		bash
+	docker run -it --platform linux/amd64 -e PORT=8000 -p $(DOCKER_LOCAL_PORT):8000 --env-file .env_docker $(DOCKER_IMAGE_PATH):prod bash
 
 docker_push:
 	docker push $(DOCKER_IMAGE_PATH):prod
 
 docker_deploy:
-	gcloud run deploy --image $(DOCKER_IMAGE_PATH):prod --min-instances 1 --memory $(GAR_MEMORY) --region $(GCP_REGION)
+	gcloud run deploy --image $(DOCKER_IMAGE_PATH):prod --env-vars-file .env_docker.yml --min-instances 1 --memory $(GAR_MEMORY) --region $(GCP_REGION)
 
 docker: docker_build docker_push docker_deploy
 
