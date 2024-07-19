@@ -10,11 +10,12 @@ import os
 WORDCLOUD_FAKE_PATH = os.getenv("WORDCLOUD_FAKE_PATH")
 WORDCLOUD_REAL_PATH = os.getenv("WORDCLOUD_REAL_PATH")
 MODEL_PATH = os.getenv("MODEL_PATH")
-
-
 MAX_REQ_TEXT=15000
+
 app = FastAPI()
 app.state.model = load_model(MODEL_PATH)
+app.state.real_words_file = load_wordcloud(WORDCLOUD_REAL_PATH)
+app.state.fake_words_file = load_wordcloud(WORDCLOUD_FAKE_PATH)
 
 
 app.add_middleware(
@@ -43,27 +44,35 @@ def post_predict(text: Annotated[str, Query(max_length=MAX_REQ_TEXT)]):
 
 
 def _response_predict(text: str):
-    y_pred = app.state.model.predict(preprocess_input(text))
+    #      0           1
+    # [[0.05986795 0.94013205]]
+    
+    print('performing predict')
+    
+    y_pred_proba = app.state.model.predict_proba(preprocess_input(text))
+    
+    print('predict done')
+    
+    fake = None
+    proba = None    
+    if y_pred_proba[0][0] > y_pred_proba[0][1]:
+        fake = False
+        proba = y_pred_proba[0][0]
+    else:
+        fake = True
+        proba = y_pred_proba[0][1]
+
     return {
-        'fake': bool(y_pred[0]),
-        'probability': _predict_proba(text)
+        'fake': fake,
+        'probability': proba
     }
 
 
-def _predict_proba(text: str):
-    return random.uniform(-1, 1)
-
-""""""
-
-real_words_file = load_wordcloud(WORDCLOUD_REAL_PATH)
-fake_words_file = load_wordcloud(WORDCLOUD_FAKE_PATH)
-
 @app.get("/wordcloud_fake")
-def get_wordclouds():
-    return fake_words_file
-
+def get_wordclouds_fake():
+    return app.state.fake_words_file
 
 
 @app.get("/wordcloud_real")
-def get_wordclouds():
-    return real_words_file
+def get_wordclouds_real():
+    return app.state.real_words_file
