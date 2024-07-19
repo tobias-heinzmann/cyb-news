@@ -1,14 +1,13 @@
-import pandas as pd
+import os
 import string
+import json
+from collections import Counter
+import pandas as pd
 
 from nltk.corpus import stopwords
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
-from collections import Counter
-import json
-
-import os
 
 MODEL_PATH = os.getenv("MODEL_PATH")
 DATA_PATH = os.getenv("DATA_PATH")
@@ -93,13 +92,7 @@ def isot_preprocessing(data: pd.DataFrame):
     return data[["all_text_cleaned"]]
 
 
-
-
-
 # Build Dict for Wordcloud
-
-
-
 def get_word_count(sentence):
     tokens = tokenize(sentence)
     v_l = [WordNetLemmatizer().lemmatize(word, pos = "v") for word in tokens]
