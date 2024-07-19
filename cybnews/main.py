@@ -12,7 +12,7 @@ if __name__ == "__main__":
     print("let")
     data = welf_join_text(data)
     print("us")
-    #data = data.sample(frac=0.01, random_state=42)
+    data = data.sample(frac=0.3, random_state=42)
     data = welf_preprocessing(data)
     print("wait")
     X_train, X_test, y_train, y_test  = train_test_split_data(data)
