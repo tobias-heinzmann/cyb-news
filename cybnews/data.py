@@ -5,10 +5,20 @@ from nltk.corpus import stopwords
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
+from collections import Counter
+import json
+
+import os
+
+MODEL_PATH = os.getenv("MODEL_PATH")
+DATA_PATH = os.getenv("DATA_PATH")
+WORDCLOUD_FAKE_PATH = os.getenv("WORDCLOUD_FAKE_PATH")
+WORDCLOUD_REAL_PATH = os.getenv("WORDCLOUD_REAL_PATH")
 
 LANGUAGE='english'
 STOPWORDS_DEL = ["not", "no", "nor", "against", "however", "but", "never", "should", "would" , "could", "might", "must", "no", "yes", "always", "none", "only", "still", "yet", "despite", "unless", "until", "cannot" ]
-STOPWORDS_ADD = []
+STOPWORDS_ADD = ["reuters"]
+
 
 
 def get_data(path):
@@ -19,11 +29,11 @@ def tokenize(sentence):
     sentence = sentence.strip()
     sentence = sentence.lower()
     sentence = "".join(char for char in sentence if not char.isdigit())
-    
+
     for x in string.punctuation:
         sentence = sentence.replace(x, '')
 
-    for x in ['’', '“', '”', '-', '"' ]:
+    for x in ['’', '“', '”', '—', '"' ]:
         sentence = sentence.replace(x, '')
 
     return word_tokenize(sentence)
@@ -35,19 +45,21 @@ def clear_stopwords(tokens, stopw_add=[], stopw_del=[], lang=LANGUAGE):
     stop_words.difference_update(stopw_del)
 
     return [w for w in tokens if w not in stop_words]
-    
+
 
 def preprocessing(sentence):
     tokens = tokenize(sentence)
+    v_l = [WordNetLemmatizer().lemmatize(word, pos = "v") for word in tokens]
+    lemmatized_token = [WordNetLemmatizer().lemmatize(word, pos = "n") for word in v_l]
+
     clean_tokens = clear_stopwords(
-        tokens,
+        lemmatized_token,
         stopw_del=STOPWORDS_DEL,
         stopw_add=STOPWORDS_ADD
     )
-    
-    v_l = [WordNetLemmatizer().lemmatize(word, pos = "v") for word in clean_tokens]
-    n_l = [WordNetLemmatizer().lemmatize(word, pos = "n") for word in v_l]
-    return ' '.join(n_l)
+
+
+    return ' '.join(clean_tokens)
 
 
 def preprocess_input(text: str):
@@ -79,3 +91,82 @@ def isot_join_text(data: pd.DataFrame):
 def isot_preprocessing(data: pd.DataFrame):
     data["all_text_cleaned"] = data["all_text"].apply(preprocessing)
     return data[["all_text_cleaned"]]
+
+
+
+
+
+# Build Dict for Wordcloud
+
+
+
+def get_word_count(sentence):
+    tokens = tokenize(sentence)
+    v_l = [WordNetLemmatizer().lemmatize(word, pos = "v") for word in tokens]
+    lemmatized_token = [WordNetLemmatizer().lemmatize(word, pos = "n") for word in v_l]
+    clean_tokens = clear_stopwords(
+        lemmatized_token,
+        stopw_del=STOPWORDS_DEL,
+        stopw_add=STOPWORDS_ADD
+    )
+    word_counts = Counter(clean_tokens)
+    return word_counts
+
+
+def get_word_cloud(data: pd.DataFrame):
+    data = welf_join_text(data)
+    data["counted"] = data["all_text"].apply(get_word_count)
+    real_news= data[data["label"] == 0]
+    fake_news= data[data["label"] == 1]
+    total_word_counts_fake = Counter()
+
+    for counts in fake_news["counted"]:
+        total_word_counts_fake.update(counts)
+    total_fake = sum(total_word_counts_fake.values())
+
+    total_word_counts_real = Counter()
+    for counts in real_news["counted"]:
+        total_word_counts_real.update(counts)
+    total_real = sum(total_word_counts_real.values())
+
+    relative_freq_fake = {word: count / total_fake for word, count in total_word_counts_fake.items()}
+    relative_freq_real = {word: count / total_real for word, count in total_word_counts_real.items()}
+
+    all_words = set(relative_freq_fake.keys()).union(set(relative_freq_real.keys()))
+    diffs = {word: relative_freq_fake.get(word, 0) - relative_freq_real.get(word, 0) for word in all_words}
+
+    fake_uptop = dict(sorted(diffs.items(), key=lambda item: item[1], reverse=True))
+    fake_uptop_list = list(fake_uptop.items())
+    fake_uptop_list_200 = fake_uptop_list[:200]
+    words_overrepresented_in_fakes = dict(fake_uptop_list_200)
+
+    fake_uptop_revesed = {word: -value for word, value in fake_uptop.items()}
+    real_uptop= dict(sorted(fake_uptop_revesed.items(), key=lambda item: item[1], reverse=True))
+    real_uptop_list = list(real_uptop.items())
+    real_uptop_list_200 = real_uptop_list[:200]
+    words_overrepresented_in_real = dict(real_uptop_list_200)
+
+    return words_overrepresented_in_real, words_overrepresented_in_fakes # dict
+
+
+def save_wordcloud(dict_to_store,json_path):
+    with open(json_path, 'w') as json_file:
+        json.dump(dict_to_store, json_file)
+
+
+def load_wordcloud(file_name):
+    with open(file_name, 'r') as j_name:
+        dict_words = json.load(j_name)
+    return dict_words
+
+
+
+if __name__ == '__main__':
+    data = get_data(DATA_PATH)
+    data= welf_join_text(data)
+    real, fake = get_word_cloud(data)
+    save_wordcloud(real, WORDCLOUD_REAL_PATH)
+    save_wordcloud(fake, WORDCLOUD_FAKE_PATH)
+
+    words = load_wordcloud(WORDCLOUD_REAL_PATH)
+    print(words)
