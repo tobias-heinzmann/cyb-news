@@ -62,19 +62,26 @@ def preprocessing(sentence):
 def preprocess_input(text: str):
     return [preprocessing(text)]
 
-
-
-### WELF data set specific
-#
-def welf_join_text(data: pd.DataFrame):
+def join_text(data: pd.DataFrame):
     data = data.fillna('')
     data["all_text"] = data["title"] + " " +  data["text"]
     return data
 
-
+### WELF data set specific
+#
 def welf_preprocessing(data: pd.DataFrame):
     data["all_text_cleaned"] = data["all_text"].apply(preprocessing)
     return data[["all_text_cleaned", "label"]]
+
+
+### CC data set specific
+#
+def cc_preprocessing(data: pd.DataFrame):
+    data["all_text_cleaned"] = data["all_text"].apply(preprocessing)
+    data["label"] = data.label.replace(to_replace=['REAL', 'FAKE'], value=[0, 1])
+    return data[["all_text_cleaned", "label"]]
+
+
 
 
 ### ISOT data set specifiv
@@ -88,4 +95,3 @@ def isot_join_text(data: pd.DataFrame):
 def isot_preprocessing(data: pd.DataFrame):
     data["all_text_cleaned"] = data["all_text"].apply(preprocessing)
     return data[["all_text_cleaned"]]
-
