@@ -1,19 +1,29 @@
-from cybnews.data import get_data, join_text_welf, preprocessing, preprocess_input
+from cybnews.data import get_data, welf_join_text, preprocessing, preprocess_input, welf_preprocessing
 from cybnews.model import train_test_split_data, create_new_model, save_model, load_model
+import os
 
-MODEL_PATH = "/home/tober/devel/lewagon/project/cyb-news/models/"
-DATA_PATH = "/home/tober/devel/lewagon/project/cyb-news/data/WELFake_Dataset.csv"
+MODEL_PATH = os.getenv("MODEL_PATH")
+
+DATA_PATH = os.getenv("DATA_PATH")
 
 
 if __name__ == "__main__":
-    #data = get_data(DATA_PATH)
-    #data = join_text_welf(data)
-    # data = data.sample(frac=0.1, random_state=42)
-    #data = preprocessing(data)
-    #X_train, X_test, y_train, y_test  = train_test_split_data(data)
+    data = get_data(DATA_PATH)
+    print("let")
+    data = welf_join_text(data)
+    print("us")
+    data = data.sample(frac=0.3, random_state=42)
+    data = welf_preprocessing(data)
+    print("wait")
+    X_train, X_test, y_train, y_test  = train_test_split_data(data)
+    print("for")
     model = create_new_model(X_train, y_train)
-    model = load_model('model.pkl', MODEL_PATH)
-    #save_model(model, MODEL_PATH)
+    print("ever")
+    #model = load_model('model.pkl', MODEL_PATH)
+    save_model(model, MODEL_PATH)
+    print("!")
     pred = model.predict(preprocess_input('sadfasdfs v dfgesgxwe'))
-    print(pred)
+    pred_proba = model.predict_proba(preprocess_input('sadfasdfs v dfgesgxwe'))
 
+    print(pred)
+    print(pred_proba)
