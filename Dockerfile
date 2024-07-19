@@ -6,6 +6,7 @@ COPY setup.py setup.py
 COPY api api
 COPY requirements.txt requirements.txt
 COPY models models
+COPY wordcloud wordcloud
 RUN mkdir -p /data
 
 RUN pip install --no-cache-dir --upgrade pip
