@@ -95,3 +95,20 @@ def isot_join_text(data: pd.DataFrame):
 def isot_preprocessing(data: pd.DataFrame):
     data["all_text_cleaned"] = data["all_text"].apply(preprocessing)
     return data[["all_text_cleaned"]]
+
+
+### FakeNewsCorpus dataset-specific
+
+def fnc_preprocessing(data: pd.DataFrame):
+    data = data[['title', 'content', 'type']]
+
+    data = data[data['type'].isin(['fake', 'real'])]
+
+    label_mapping = {'fake': 1, 'real': 0}
+    data['label'] = data['type'].map(label_mapping)
+
+    data['all_text'] = data['title'] + " " + data['content']
+
+    data = data.drop(columns=['title', 'content', 'type'])
+
+    return data[["all_text_cleaned"]]
