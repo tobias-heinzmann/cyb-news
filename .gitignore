@@ -1,6 +1,9 @@
 models/
 my-models/
 
+# optuna database
+notebooks/optuna_study.db
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
