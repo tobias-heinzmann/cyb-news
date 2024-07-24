@@ -36,6 +36,7 @@ nltk
 scikit-learn
 collections
 json
+shap
 
 uvicorn
 fastapi
