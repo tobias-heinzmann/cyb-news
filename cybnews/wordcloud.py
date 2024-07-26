@@ -5,7 +5,7 @@ import pandas as pd
 
 from nltk.stem import WordNetLemmatizer
 
-from .data import get_data, welf_join_text, clear_stopwords, tokenize, STOPWORDS_DEL, STOPWORDS_ADD, DATA_PATH
+from .data import get_data, join_text, clear_stopwords, tokenize, STOPWORDS_DEL, STOPWORDS_ADD, DATA_PATH
 
 WORDCLOUD_FAKE_PATH = os.getenv("WORDCLOUD_FAKE_PATH")
 WORDCLOUD_REAL_PATH = os.getenv("WORDCLOUD_REAL_PATH")
@@ -26,7 +26,7 @@ def get_word_count(sentence):
 
 
 def get_word_cloud(data: pd.DataFrame):
-    data = welf_join_text(data)
+    data = join_text(data)
     data["counted"] = data["all_text"].apply(get_word_count)
     real_news= data[data["label"] == 0]
     fake_news= data[data["label"] == 1]
@@ -69,7 +69,7 @@ def save_wordcloud(dict_to_store,json_path):
 def load_wordcloud(file_name):
     if file_name is None:
         return {}
-    
+
     with open(file_name, 'r') as j_name:
         dict_words = json.load(j_name)
     return dict_words
@@ -83,10 +83,10 @@ def generate_wordclouds_welf(control_print=True):
 
     if not control_print:
         return
-    
+
     words_fake = load_wordcloud(WORDCLOUD_FAKE_PATH)
     words_real = load_wordcloud(WORDCLOUD_REAL_PATH)
-    
+
     print('words fake:')
     print(words_fake)
     print()
