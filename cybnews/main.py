@@ -1,4 +1,4 @@
-from cybnews.data import get_data, welf_join_text, preprocessing, preprocess_input, welf_preprocessing
+from cybnews.data import get_data, join_text, preprocessing, preprocess_input, welf_preprocessing
 from cybnews.model import train_test_split_data, create_new_model, save_model, load_model
 import os
 
@@ -10,7 +10,7 @@ DATA_PATH = os.getenv("DATA_PATH")
 if __name__ == "__main__":
     data = get_data(DATA_PATH)
     print("let")
-    data = welf_join_text(data)
+    data = join_text(data)
     print("us")
     data = data.sample(frac=0.3, random_state=42)
     data = welf_preprocessing(data)
